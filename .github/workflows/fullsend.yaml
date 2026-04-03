@@ -1,0 +1,22 @@
+# fullsend shim workflow
+# Routes events to the reusable agent dispatch workflow in .fullsend.
+name: fullsend
+
+on:
+  issues:
+    types: [opened, edited, labeled]
+  issue_comment:
+    types: [created]
+  pull_request:
+    types: [opened, synchronize, ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  dispatch:
+    uses: halfsend/.fullsend/.github/workflows/agent.yaml@main
+    with:
+      event_type: ${{ github.event_name }}
+      event_payload: ${{ toJSON(github.event) }}
+    secrets:
+      APP_PRIVATE_KEY: ${{ secrets.FULLSEND_FULLSEND_APP_PRIVATE_KEY }}
